@@ -13,12 +13,11 @@ class ProductController extends Controller
      */
     public function index(): JsonResponse
     {
-        $products = Product::all();
         return response()->json([
             'success' => true,
             'message' => 'Products retrieved successfully',
-            'data' => $products
-        ], 200);
+            'data' => Product::all()
+        ]);
     }
 
     /**
@@ -26,13 +25,13 @@ class ProductController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
+            'price' => 'required|numeric|min:0',
             'description' => 'nullable|string'
         ]);
 
-        $product = Product::create($request->all());
+        $product = Product::create($validatedData);
 
         return response()->json([
             'success' => true,
@@ -44,66 +43,45 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id): JsonResponse
+    public function show(Product $product): JsonResponse
     {
-        $product = Product::find($id);
-
-        if (!$product) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Product not found'
-            ], 404);
-        }
-
         return response()->json([
             'success' => true,
             'message' => 'Product retrieved successfully',
             'data' => $product
-        ], 200);
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id): JsonResponse
+    public function update(Request $request, Product $product): JsonResponse
     {
-        $product = Product::find($id);
+        $validatedData = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'price' => 'sometimes|required|numeric|min:0',
+            'description' => 'nullable|string'
+        ]);
 
-        if (!$product) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Product not found'
-            ], 404);
-        }
-
-        $product->update($request->all());
+        $product->update($validatedData);
 
         return response()->json([
             'success' => true,
             'message' => 'Product updated successfully',
             'data' => $product
-        ], 200);
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id): JsonResponse
+    public function destroy(Product $product): JsonResponse
     {
-        $product = Product::find($id);
-
-        if (!$product) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Product not found'
-            ], 404);
-        }
-
         $product->delete();
 
         return response()->json([
             'success' => true,
             'message' => 'Product deleted successfully'
-        ], 200);
+        ]);
     }
 }
