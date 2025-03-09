@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -16,7 +17,7 @@ class ProductController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Products retrieved successfully',
-            'data' => Product::all()
+            'data' => ProductResource::collection(Product::all())
         ]);
     }
 
@@ -36,7 +37,7 @@ class ProductController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Product created successfully',
-            'data' => $product
+            'data' => new ProductResource($product)
         ], 201);
     }
 
@@ -48,7 +49,7 @@ class ProductController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Product retrieved successfully',
-            'data' => $product
+            'data' => new ProductResource($product)
         ]);
     }
 
@@ -68,7 +69,7 @@ class ProductController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Product updated successfully',
-            'data' => $product
+            'data' => new ProductResource($product)
         ]);
     }
 
@@ -82,6 +83,6 @@ class ProductController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Product deleted successfully'
-        ]);
+        ], 200);
     }
 }
